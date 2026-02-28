@@ -18,8 +18,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "rails-terminal.open",
-        "title": "Rails Terminal: Start Server"
+        "command": "rails-terminal.re-start",
+        "title": "Rails Terminal: [Re]start Server"
       }
     ]
   },

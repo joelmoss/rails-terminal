@@ -5,25 +5,27 @@ import * as path from "path";
 let railsTerminal: vscode.Terminal | undefined;
 
 function startRailsServer(workspaceRoot: string) {
-  if (railsTerminal && !railsTerminal.exitStatus) {
-    railsTerminal.show();
-    return;
-  }
-
-  railsTerminal?.dispose();
-
   const binRails = path.join(workspaceRoot, "bin", "rails");
   const command = fs.existsSync(binRails)
     ? "bin/rails server"
     : "bundle exec rails server";
 
-  const shell = process.env.SHELL || "/bin/zsh";
-  railsTerminal = vscode.window.createTerminal({
-    name: "Rails Server",
-    shellPath: shell,
-    shellArgs: ["-lic", `exec ${command}`],
-    cwd: workspaceRoot,
-  });
+  if (railsTerminal && !railsTerminal.exitStatus) {
+    railsTerminal.sendText("\x03", false); // send Ctrl+C to stop server
+  } else {
+    railsTerminal?.dispose();
+
+    const shell = process.env.SHELL || "/bin/zsh";
+    railsTerminal = vscode.window.createTerminal({
+      name: "Rails Server",
+      shellPath: shell,
+      shellArgs: ["-li"],
+      cwd: workspaceRoot,
+    });
+  }
+
+  railsTerminal.sendText(command);
+
   railsTerminal.show();
 }
 
@@ -46,19 +48,16 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  const disposable = vscode.commands.registerCommand(
-    "rails-terminal.open",
-    () => {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("rails-terminal.re-start", () => {
       const folder = vscode.workspace.workspaceFolders?.[0];
       if (!folder) {
         vscode.window.showErrorMessage("No workspace folder open.");
         return;
       }
       startRailsServer(folder.uri.fsPath);
-    }
+    })
   );
-
-  context.subscriptions.push(disposable);
 
   // Auto-start if this is a Rails project
   const folder = vscode.workspace.workspaceFolders?.[0];
