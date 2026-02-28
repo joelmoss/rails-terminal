@@ -1,0 +1,35 @@
+{
+  "name": "rails-terminal",
+  "displayName": "Rails Terminal",
+  "description": "Auto-start a Rails server in a persistent terminal",
+  "version": "0.0.1",
+  "publisher": "joelmoss",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/Gemfile"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "rails-terminal.open",
+        "title": "Rails Terminal: Start Server"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  }
+}
